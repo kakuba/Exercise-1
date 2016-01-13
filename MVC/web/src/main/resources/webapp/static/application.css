@@ -1,0 +1,25 @@
+.sample {
+    color: white;
+    background-color: grey;
+}
+.body {
+	background-color: 	#808080;
+}
+.table {
+	color: white;
+	background-color: #606060;
+	border-style: solid;
+	border-color: #404040;
+	border-width: 10px;
+	
+}
+.info {
+	color: red;
+	background-color: #808080;
+}
+.tr {
+	color: white;
+	background-color: #989898;
+	border-collapse: separate;
+	border-spacing: 10px;
+}
