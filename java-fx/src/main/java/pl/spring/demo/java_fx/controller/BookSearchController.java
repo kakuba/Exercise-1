@@ -1,9 +1,7 @@
 package pl.spring.demo.java_fx.controller;
 
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.ResourceBundle;
 
@@ -13,16 +11,22 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import pl.spring.demo.java_fx.RestClient.RestClient;
 import pl.spring.demo.java_fx.model.BookSearch;
 import pl.spring.demo.to.BookTo;
-import pl.spring.demo.web.rest.BookRestService;
 
 public class BookSearchController {
 	private static final Logger LOG = Logger.getLogger(BookSearchController.class);
@@ -38,6 +42,9 @@ public class BookSearchController {
 	
 	@FXML
 	private Button searchButton;
+	
+	@FXML
+	private Button addButton;
 	
 	@FXML
 	private TableView<BookTo> resultTable;
@@ -67,14 +74,13 @@ public class BookSearchController {
 		resultTable.itemsProperty().bind(model.resultProperty());
 
 
-		searchButton.disableProperty().bind(titleField.textProperty().isEmpty());
+//		searchButton.disableProperty().bind(titleField.textProperty().isEmpty());
 	}
 
 
 
 	private void initializeResultTable() {
 		titleColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getTitle()));
-		// nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 		authorsColumn
 				.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getAuthors()));
 
@@ -89,21 +95,44 @@ public class BookSearchController {
 
 		searchButtonAction();
 	}
-
+	
+	@FXML
+	public void addButtonAction(ActionEvent event) throws Exception {               
+		LOG.debug("'Add' button clicked");
+        try {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/pl/spring/demo/java_fx/controller/view/book-add.fxml"));
+                Parent root1 = (Parent) fxmlLoader.load();
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root1));  
+                
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.initOwner(addButton.getScene().getWindow());
+                
+                stage.show();
+                
+                stage.setOnHiding(new EventHandler<WindowEvent>() {
+    				public void handle(WindowEvent we) {
+    					searchButtonAction();
+    				}
+    			});
+        } catch(Exception e) {
+           e.printStackTrace();
+          }
+        
+}
+	
 	private void searchButtonAction() {
 		Task<Collection<BookTo>> backgroundTask = new Task<Collection<BookTo>>() {
 
 			@Override
 			protected Collection<BookTo> call() throws Exception {
 				LOG.debug("call() called");
-//				Collection<BookTo> result = new ArrayList<>();
+				
+				if(model.getTitle() == null) {
+					model.setTitle(" ");
+				}
+				
 				Collection<BookTo> result = restClient.find(model.getTitle());
-
-				
-				
-//				Collection<BookTo> result = dataProvider.findPersons( //
-//						model.getName(), //
-//						model.getSex().toSexVO());
 
 				return result;
 			}
