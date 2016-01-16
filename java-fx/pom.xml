@@ -19,6 +19,7 @@
   </properties>
 
   <dependencies>
+  <!-- REV: klient nie moze miec zaleznosci do serwera -->
     <dependency>
       <groupId>pl.spring.demo</groupId>
             <artifactId>web</artifactId>

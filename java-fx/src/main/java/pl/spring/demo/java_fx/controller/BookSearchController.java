@@ -30,35 +30,35 @@ import pl.spring.demo.to.BookTo;
 
 public class BookSearchController {
 	private static final Logger LOG = Logger.getLogger(BookSearchController.class);
-	
+
 	@FXML
 	private ResourceBundle resources;
-	
+
 	@FXML
 	private URL location;
-	
+
 	@FXML
 	private TextField titleField;
-	
+
 	@FXML
 	private Button searchButton;
-	
+
 	@FXML
 	private Button addButton;
-	
+
 	@FXML
 	private TableView<BookTo> resultTable;
-	
+
 	@FXML
 	private TableColumn<BookTo, String> titleColumn;
 
 	@FXML
 	private TableColumn<BookTo, String> authorsColumn;
-	
+
 	private final BookSearch model = new BookSearch();
-	
+
 	private final RestClient restClient = new RestClient();
-	
+
 	public BookSearchController() {
 		LOG.debug("Constructor: nameField = " + titleField);
 	}
@@ -95,43 +95,49 @@ public class BookSearchController {
 
 		searchButtonAction();
 	}
-	
+
 	@FXML
-	public void addButtonAction(ActionEvent event) throws Exception {               
+	public void addButtonAction(ActionEvent event) throws Exception {
 		LOG.debug("'Add' button clicked");
         try {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/pl/spring/demo/java_fx/controller/view/book-add.fxml"));
                 Parent root1 = (Parent) fxmlLoader.load();
                 Stage stage = new Stage();
-                stage.setScene(new Scene(root1));  
-                
+                stage.setScene(new Scene(root1));
+
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.initOwner(addButton.getScene().getWindow());
-                
+
                 stage.show();
-                
+
                 stage.setOnHiding(new EventHandler<WindowEvent>() {
     				public void handle(WindowEvent we) {
+    					/*
+    					 * REV: wyszukiwanie ksiazek nie jest potrzebne, gdy okno dodawania jest zamykane bez dodania ksiazki
+    					 */
     					searchButtonAction();
     				}
     			});
         } catch(Exception e) {
+        	/*
+        	 * REV: obsluga wyjatkow
+        	 */
            e.printStackTrace();
           }
-        
+
 }
-	
+
 	private void searchButtonAction() {
 		Task<Collection<BookTo>> backgroundTask = new Task<Collection<BookTo>>() {
 
 			@Override
 			protected Collection<BookTo> call() throws Exception {
 				LOG.debug("call() called");
-				
+
 				if(model.getTitle() == null) {
 					model.setTitle(" ");
 				}
-				
+
 				Collection<BookTo> result = restClient.find(model.getTitle());
 
 				return result;

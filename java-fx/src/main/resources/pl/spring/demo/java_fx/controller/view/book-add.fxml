@@ -18,6 +18,7 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
+      <!-- REV: teksty powinny byc pobierane z bundle -->
       <Label text="Title" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
       <Label text="Authors" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
       <TextField fx:id="bookTitleField" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
